@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>react虚拟DOM</title>
+		<script src="babel.min.js"></script>
+	</head>
+	<body>
+		<script>
+			function demo() {
+				//es5 转真实数组
+				// console.log(Array.prototype.slice.call(arguments))
+				//es6 转真实数组
+				// console.log(Array.from(arguments))
+			}
+			demo(1,2,3,4,5)
+			
+			let getarr =  (...args) => {
+				// console.log(args)
+			}
+			getarr(1,2,3,4,5)
+		</script>
+		<script type="text/babel">
+			//'@jsx babel'的自执行指令
+			/*@jsx createElement*/ 
+
+			let user = [
+				{name:"张三"},
+				{name:"李四"},
+				{name:"王五"},
+			]
+
+			var vdom = (<div id="app" name="div">
+					hello word
+					<ul>
+						{
+							user.map( (item,index) => {
+								return (
+									<li key={index}>{item.name}</li>
+								)
+							})
+						}
+					</ul>
+				</div>)
+			// var vdom = ("hello word")
+			
+			function createElement(nodeName,attr,...args) {
+				// console.log(nodeName,attr,args)
+				return {nodeName:nodeName,attr:attr,children:[].concat(...args)}
+			}
+
+			function render(vnode){
+				// console.log(vnode.split)
+				//如果是文本
+				if(vnode.split){
+					return document.createTextNode(vnode)
+				}
+
+				//如果不是文本
+				let node = document.createElement(vnode.nodeName);
+				//添加属性
+
+				let attr = vnode.attr || {}
+
+				Object.keys(attr).forEach( k => {
+					// console.log(k,attr[k])
+					node.setAttribute(k,attr[k])
+				});
+
+
+				//添加子节点
+					(vnode.children || []).forEach( (n) => {
+						// console.log(n)
+						node.appendChild(render(n))
+					})
+				return node;
+				// console.log(vnode.nodeName)
+			}
+			
+			let dom = render(vdom)
+			document.body.appendChild(dom)
+		</script>
+	</body>
+</html>
